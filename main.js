@@ -15,10 +15,6 @@ const clearFormButton = document.getElementById("clear-form");
 let lineChartReference = {};
 let tableReference = {};
 
-function formatCurrencyToGraph(value) {
-  return value.toFixed(2);
-}
-
 function renderProgression(evt) {
   evt.preventDefault();
   if (document.querySelector(".error")) {
@@ -115,8 +111,31 @@ function renderProgression(evt) {
       },
     });
 
-    createTable(["Mês", `Total Investido`], results, "results-table");
+    generateFinalTable(results, "results-table");
   } else {
+    const top10InvestedAmounts = results["top10"].map(
+      (investmentObject) => investmentObject.investedAmount
+    );
+    const topDividendsInvestedAmounts = results["topDividends"].map(
+      (investmentObject) => investmentObject.investedAmount
+    );
+    const fiiXPInvestedAmounts = results["fiiXP"].map(
+      (investmentObject) => investmentObject.investedAmount
+    );
+
+    const top10AdjustedInvestedAmounts = top10InvestedAmounts.map(
+      (amount, index) => amount - top10InvestedAmounts[0] + startingAmount
+    );
+
+    const topDividendsAdjustedInvestedAmounts = topDividendsInvestedAmounts.map(
+      (amount, index) =>
+        amount - topDividendsInvestedAmounts[0] + startingAmount
+    );
+
+    const fiiXPAdjustedInvestedAmounts = fiiXPInvestedAmounts.map(
+      (amount, index) => amount - fiiXPInvestedAmounts[0] + startingAmount
+    );
+
     lineChartReference["allClasses"] = new Chart(progressionChart, {
       type: "line",
       data: {
@@ -125,26 +144,20 @@ function renderProgression(evt) {
         ),
         datasets: [
           {
-            label: `Top 10 - Total Investido`,
-            data: results["top10"].map(
-              (investmentObject) => investmentObject.investedAmount
-            ),
+            label: `Top 10`,
+            data: top10AdjustedInvestedAmounts,
             borderColor: "#FF5733", // Cor fixa
             fill: false,
           },
           {
-            label: `Top Dividendos - Total Investido`,
-            data: results["topDividends"].map(
-              (investmentObject) => investmentObject.investedAmount
-            ),
+            label: `Top Dividendos`,
+            data: topDividendsAdjustedInvestedAmounts,
             borderColor: "#33FF57", // Cor fixa
             fill: false,
           },
           {
-            label: `FII XP - Total Investido`,
-            data: results["fiiXP"].map(
-              (investmentObject) => investmentObject.investedAmount
-            ),
+            label: `FII XP`,
+            data: fiiXPAdjustedInvestedAmounts,
             borderColor: "#3366FF", // Cor fixa para FII XP
             fill: false,
           },
@@ -157,13 +170,13 @@ function renderProgression(evt) {
             stacked: true,
           },
           y: {
-            stacked: true, // Adicione esta linha
-            beginAtZero: true,
+            stacked: false,
+            beginAtZero: false,
             suggestedMax:
               Math.max(
-                ...results["top10"].map(
-                  (investmentObject) => investmentObject.investedAmount
-                )
+                ...top10AdjustedInvestedAmounts,
+                ...topDividendsAdjustedInvestedAmounts,
+                ...fiiXPAdjustedInvestedAmounts
               ) + 1000,
           },
         },
@@ -189,6 +202,13 @@ function renderProgression(evt) {
       })),
       "results-table"
     );
+
+    const finalResults = calculateFinalResults(
+      startingAmount,
+      additionalContribution,
+      selectedClass
+    );
+    generateFinalTable(finalResults, "results-table");
   }
 
   lineChartReference[selectedClass] = new Chart(progressionChart, {
@@ -211,16 +231,6 @@ function renderProgression(evt) {
       },
     },
   });
-}
-
-// Função auxiliar para obter uma cor aleatória para os gráficos de linha
-function getRandomColor() {
-  const letters = "0123456789ABCDEF";
-  let color = "#";
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
 }
 
 function isObjectEmpty(obj) {

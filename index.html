@@ -117,12 +117,17 @@
         class="h-full w-full flex overflow-x-auto scroll-smooth"
       >
         <section id="charts-conteiner" class="h-full basis-full shrink-0">
-          <div class="h-[36%] flex flex-col items-center">
+          <div class="h-[10%] flex flex-col items-center">
             <p class="font-bold text-lg">Resultado Final</p>
-            <div id="final-results-table-container"></div>
-            <canvas id="final-money-distribution"></canvas>
+            <table
+              id="results-table"
+              class="w-full max-h-full border border-separate px-3"
+            >
+              <thead></thead>
+              <tbody></tbody>
+            </table>
           </div>
-          <div class="h-[56%] flex flex-col items-center pt-10">
+          <div class="h-[80%] flex flex-col items-center pt-10">
             <p class="font-bold text-lg">Progressão</p>
             <canvas id="progression"></canvas>
           </div>
@@ -132,13 +137,6 @@
           class="h-full overflow-y-auto basis-full shrink-0"
         >
           <p class="font-bold text-lg text-center">Resultados mensais</p>
-          <table
-            id="results-table"
-            class="w-full max-h-full border border-separate px-3"
-          >
-            <thead></thead>
-            <tbody></tbody>
-          </table>
         </section>
       </div>
     </main>
