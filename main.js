@@ -1,4 +1,11 @@
-import { calculateInvestmentResults } from "./src/calculate";
+// main.js
+
+import {
+  calculateInvestmentResults,
+  top10XPData,
+  topDividendsData,
+  fiiXPData,
+} from "./src/calculate";
 import { Chart } from "chart.js/auto";
 
 const finalMoneyChart = document.getElementById("final-money-distribution");
@@ -34,11 +41,37 @@ function renderProgression(evt) {
     document.getElementById("additional-contribution").value.replace(",", ".")
   );
   const selectedClass = document.getElementById("investment-clas").value;
-  const results = calculateInvestmentResults(
-    startingAmount,
-    additionalContribution,
-    selectedClass
-  );
+  let results;
+
+  if (selectedClass === "allClasses") {
+    const resultsTop10 = calculateInvestmentResults(
+      startingAmount,
+      additionalContribution,
+      "top10"
+    );
+    const resultsTopDividends = calculateInvestmentResults(
+      startingAmount,
+      additionalContribution,
+      "topDividends"
+    );
+    const resultsFiiXP = calculateInvestmentResults(
+      startingAmount,
+      additionalContribution,
+      "fii"
+    );
+
+    results = {
+      top10: resultsTop10,
+      topDividends: resultsTopDividends,
+      fiiXP: resultsFiiXP,
+    };
+  } else {
+    results = calculateInvestmentResults(
+      startingAmount,
+      additionalContribution,
+      selectedClass
+    );
+  }
 
   if (Array.isArray(results)) {
     lineChartReference[selectedClass] = new Chart(progressionChart, {
@@ -47,17 +80,17 @@ function renderProgression(evt) {
         labels: results.map((investmentObject) => investmentObject.month),
         datasets: [
           {
-            label: `${selectedClass} - Total Investido`,
+            label: `Total Investido`,
             data: results.map(
               (investmentObject) => investmentObject.investedAmount
             ),
-            borderColor: getRandomColor(),
+            borderColor: selectedClass === "top10" ? "#FF5733" : "#33FF57", // Cores fixas
             fill: false,
           },
           {
-            label: `${selectedClass} - Retorno do Investimento`,
+            label: `Retorno do Investimento`,
             data: results.map((investmentObject) => investmentObject.return),
-            borderColor: getRandomColor(),
+            borderColor: selectedClass === "top10" ? "#FF5733" : "#33FF57", // Cores fixas
             fill: false,
           },
         ],
@@ -82,77 +115,102 @@ function renderProgression(evt) {
       },
     });
 
+    createTable(["Mês", `Total Investido`], results, "results-table");
+  } else {
+    lineChartReference["allClasses"] = new Chart(progressionChart, {
+      type: "line",
+      data: {
+        labels: results["top10"].map(
+          (investmentObject) => investmentObject.month
+        ),
+        datasets: [
+          {
+            label: `Top 10 - Total Investido`,
+            data: results["top10"].map(
+              (investmentObject) => investmentObject.investedAmount
+            ),
+            borderColor: "#FF5733", // Cor fixa
+            fill: false,
+          },
+          {
+            label: `Top Dividendos - Total Investido`,
+            data: results["topDividends"].map(
+              (investmentObject) => investmentObject.investedAmount
+            ),
+            borderColor: "#33FF57", // Cor fixa
+            fill: false,
+          },
+          {
+            label: `FII XP - Total Investido`,
+            data: results["fiiXP"].map(
+              (investmentObject) => investmentObject.investedAmount
+            ),
+            borderColor: "#3366FF", // Cor fixa para FII XP
+            fill: false,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: {
+            stacked: true,
+          },
+          y: {
+            stacked: true, // Adicione esta linha
+            beginAtZero: true,
+            suggestedMax:
+              Math.max(
+                ...results["top10"].map(
+                  (investmentObject) => investmentObject.investedAmount
+                )
+              ) + 1000,
+          },
+        },
+      },
+    });
+
     createTable(
       [
         "Mês",
-        `${selectedClass} - Total Investido`,
-        `${selectedClass} - Retorno do Investimento`,
+        "Top 10 - Total Investido",
+        "Top Dividendos - Total Investido",
+        "FII XP - Total Investido",
       ],
-      results,
+      results["top10"].map((investmentObject, index) => ({
+        month: investmentObject.month,
+        totalInvestedAmount: investmentObject.investedAmount,
+        totalReturn: investmentObject.return,
+        topDividendsInvestedAmount:
+          results["topDividends"][index].investedAmount,
+        topDividendsReturn: results["topDividends"][index].return,
+        fiiXPInvestedAmount: results["fiiXP"][index].investedAmount,
+        fiiXPReturn: results["fiiXP"][index].return,
+      })),
       "results-table"
     );
-  } else {
-    // Caso seja um objeto, tratamos como "Todas as Carteiras"
-    for (const className in results) {
-      if (results.hasOwnProperty(className)) {
-        const classResults = results[className];
-        lineChartReference[className] = new Chart(progressionChart, {
-          type: "line",
-          data: {
-            labels: classResults.map(
-              (investmentObject) => investmentObject.month
-            ),
-            datasets: [
-              {
-                label: `${className} - Total Investido`,
-                data: classResults.map(
-                  (investmentObject) => investmentObject.investedAmount
-                ),
-                borderColor: getRandomColor(),
-                fill: false,
-              },
-              {
-                label: `${className} - Retorno do Investimento`,
-                data: classResults.map(
-                  (investmentObject) => investmentObject.return
-                ),
-                borderColor: getRandomColor(),
-                fill: false,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            scales: {
-              x: {
-                stacked: true,
-              },
-              y: {
-                stacked: true,
-                beginAtZero: true,
-                suggestedMax:
-                  Math.max(
-                    ...classResults.map(
-                      (investmentObject) => investmentObject.investedAmount
-                    )
-                  ) + 1000,
-              },
-            },
-          },
-        });
-
-        createTable(
-          [
-            "Mês",
-            `${className} - Total Investido`,
-            `${className} - Retorno do Investimento`,
-          ],
-          classResults,
-          "results-table"
-        );
-      }
-    }
   }
+
+  lineChartReference[selectedClass] = new Chart(progressionChart, {
+    type: "line",
+    data: {
+      labels: allLabels,
+      datasets: [...allInvestedAmountData, ...allReturnData],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          stacked: true,
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+          suggestedMax: Math.max(...allInvestedAmountData[0].data) + 1000,
+        },
+      },
+    },
+  });
 }
 
 // Função auxiliar para obter uma cor aleatória para os gráficos de linha
