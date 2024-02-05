@@ -2,6 +2,7 @@
 
 // Dados mensais de rendimento para as carteiras
 const top10XPData = [
+  { month: "jun/18", return: 0.0 },
   { month: "jul/18", return: 9.76 },
   { month: "ago/18", return: -3.4 },
   { month: "set/18", return: 3.81 },
@@ -72,6 +73,7 @@ const top10XPData = [
 ];
 
 const topDividendsData = [
+  { month: "jun/18", return: 0.0 },
   { month: "jul/18", return: 5.82 },
   { month: "ago/18", return: 0.07 },
   { month: "set/18", return: 1.98 },
@@ -142,6 +144,7 @@ const topDividendsData = [
 ];
 
 const fiiXPData = [
+  { month: "jun/18", return: 0.0 },
   { month: "jul/18", return: 1.23 },
   { month: "ago/18", return: -2.1 },
   { month: "set/18", return: 3.45 },
