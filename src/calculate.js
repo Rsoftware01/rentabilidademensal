@@ -291,22 +291,150 @@ function calculateInvestmentResultsForClass(
   additionalContribution,
   classData
 ) {
-  const monthlyResults = [startingAmount];
+  let investedAmount = startingAmount;
+  let results = [];
 
   for (let i = 0; i < classData.length; i++) {
-    const monthlyReturn =
-      (monthlyResults[i] + (i === 0 ? 0 : additionalContribution)) *
-      (1 + classData[i].return / 100);
-    monthlyResults.push(monthlyReturn);
+    const data = classData[i];
+
+    const monthlyReturn = (investedAmount * data.return) / 100;
+
+    // Adiciona o aporte adicional apenas a partir do segundo mês
+    if (i > 0) {
+      investedAmount += additionalContribution;
+    }
+
+    const investWithoutReturn = startingAmount + additionalContribution * i;
+    const returnReturn =
+      i === 0 ? monthlyReturn : monthlyReturn + results[i - 1].returnReturn;
+
+    investedAmount += monthlyReturn;
+
+    results.push({
+      month: data.month,
+      investWithoutReturn: parseFloat(investWithoutReturn.toFixed(2)),
+      investedAmount: parseFloat(investedAmount.toFixed(2)),
+      return: parseFloat(monthlyReturn.toFixed(2)),
+      returnReturn: parseFloat(returnReturn.toFixed(2)),
+      totalInvested: parseFloat((investedAmount - monthlyReturn).toFixed(2)),
+      investedAmountWithoutReturns: parseFloat(
+        (investedAmount - monthlyReturn - additionalContribution).toFixed(2)
+      ),
+    });
   }
 
-  const resultsWithMonth = classData.map((item, index) => ({
-    month: item.month,
-    interestReturns: item.return,
-    investedAmount: monthlyResults[index],
-  }));
-
-  return resultsWithMonth;
+  return results;
 }
 
-export { calculateInvestmentResults, top10XPData, topDividendsData, fiiXPData };
+// Adicione esta função no seu código calculate.js
+
+function consolidateResults(resultsTop10, resultsTopDividends, resultsFiiXP) {
+  const consolidatedResults = [];
+
+  for (let i = 0; i < resultsTop10.length; i++) {
+    const totalInvested =
+      resultsTop10[i].totalInvested +
+      resultsTopDividends[i].totalInvested +
+      resultsFiiXP[i].totalInvested;
+
+    const totalReturn =
+      resultsTop10[i].returnReturn +
+      resultsTopDividends[i].returnReturn +
+      resultsFiiXP[i].returnReturn;
+
+    const finalValue = totalInvested + totalReturn;
+
+    consolidatedResults.push({
+      month: resultsTop10[i].month,
+      totalInvested,
+      totalReturn,
+      finalValue,
+    });
+  }
+
+  return consolidatedResults;
+}
+
+// Modifique a função calculateFinalResults para retornar os resultados consolidados
+function calculateFinalResults(
+  startingAmount,
+  additionalContribution,
+  selectedClass
+) {
+  let resultsTop10, resultsTopDividends, resultsFiiXP;
+
+  if (selectedClass === "top10") {
+    resultsTop10 = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      top10XPData
+    );
+  } else if (selectedClass === "topDividends") {
+    resultsTopDividends = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      topDividendsData
+    );
+  } else if (selectedClass === "fii") {
+    resultsFiiXP = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      fiiXPData
+    );
+  } else if (selectedClass === "allClasses") {
+    resultsTop10 = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      top10XPData
+    );
+    resultsTopDividends = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      topDividendsData
+    );
+    resultsFiiXP = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      fiiXPData
+    );
+
+    return {
+      resultsTop10,
+      resultsTopDividends,
+      resultsFiiXP,
+      consolidatedResults: consolidateResults(
+        resultsTop10,
+        resultsTopDividends,
+        resultsFiiXP
+      ),
+    };
+  } else {
+    return {
+      error: "Invalid class selected",
+    };
+  }
+
+  return {
+    results:
+      selectedClass === "top10"
+        ? resultsTop10
+        : resultsTopDividends || resultsFiiXP,
+    consolidatedResults:
+      selectedClass === "top10"
+        ? []
+        : consolidateResults(
+            resultsTop10 || [],
+            resultsTopDividends || [],
+            resultsFiiXP || []
+          ),
+  };
+}
+
+export {
+  calculateInvestmentResultsForClass,
+  calculateInvestmentResults,
+  calculateFinalResults,
+  top10XPData,
+  topDividendsData,
+  fiiXPData,
+};

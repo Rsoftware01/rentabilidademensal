@@ -116,27 +116,48 @@
         id="carousel"
         class="h-full w-full flex overflow-x-auto scroll-smooth"
       >
-        <section id="charts-conteiner" class="h-full basis-full shrink-0">
-          <div class="h-[10%] flex flex-col items-center">
-            <p class="font-bold text-lg">Resultado Final</p>
+        <section id="results-final" class="h-full basis-full shrink-0">
+          <div class="h-[9%] flex flex-col items-center">
+            <!-- <p class="font-bold text-lg">Resultado Final</p>
             <table
-              id="results-table"
-              class="w-full max-h-full border border-separate px-3"
+              id="results-final"
+              class="w-full max-h-full border border-separate px-3 text-center"
             >
-              <thead></thead>
+              <thead class="bg-blue-900 text-white">
+                <tr>
+                  <th>Total Investido</th>
+                  <th>Rendimento total</th>
+                  <th>Valor final</th>
+                </tr>
+              </thead>
               <tbody></tbody>
-            </table>
+            </table> -->
           </div>
-          <div class="h-[80%] flex flex-col items-center pt-10">
+          <div class="h-[78%] flex flex-col items-center pt-10">
             <p class="font-bold text-lg">Progressão</p>
             <canvas id="progression"></canvas>
           </div>
         </section>
         <section
-          id="table-container"
+          id="results-table"
           class="h-full overflow-y-auto basis-full shrink-0"
         >
           <p class="font-bold text-lg text-center">Resultados mensais</p>
+          <table
+            id="results-table"
+            class="w-full max-h-full border border-separate px-3 text-center px-1 py-1"
+          >
+            <thead class="bg-blue-900 text-white">
+              <tr>
+                <th>Mês</th>
+                <th>Total Investido</th>
+                <th>Rendimento mensal</th>
+                <th>Rendimento total</th>
+                <th>Valor final</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </section>
       </div>
     </main>
