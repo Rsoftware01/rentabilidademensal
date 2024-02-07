@@ -151,7 +151,7 @@ function handleCalculateResults() {
     console.log("\nDetalhes mensais:\n");
     displayResults(investmentResults.results);
     renderTable(investmentResults.results);
-    renderConsolidatedTable(investmentResults.consolidatedData);
+    renderConsolidatedTable(investmentResults.results);
   }
 }
 
@@ -262,8 +262,8 @@ function renderProgression(evt) {
         },
       },
     });
-  } else if (Array.isArray(results[selectedClass1])) {
-    lineChartReference[selectedClass1] = new Chart(progressionChart, {
+  } else {
+    lineChartReference["allClasses"] = new Chart(progressionChart, {
       type: "line",
       data: {
         labels: results[selectedClass1].map(
@@ -296,10 +296,10 @@ function renderProgression(evt) {
           },
           {
             label: `Total Investido - Sem Rendimento`,
-            data: results[selectedClass1].map(
+            data: results[selectedClass2].map(
               (investmentObject) => investmentObject.investWithoutReturn
             ),
-            borderColor: selectedClass1 === "top10" ? "#3366FF" : "#3366FF", // Cores fixas
+            borderColor: selectedClass2 === "top10" ? "#3366FF" : "#3366FF", // Cores fixas
             fill: false,
           },
         ],

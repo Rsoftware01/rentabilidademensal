@@ -41,8 +41,7 @@ function calculateInvestmentResults(
   startingAmount,
   additionalContribution,
   selectedClass1,
-  selectedClass2,
-  selectedClass3
+  selectedClass2
 ) {
   const results = {};
 
@@ -115,7 +114,6 @@ function calculateInvestmentResults(
 
   results[selectedClass1] = calculateResultsForClass(selectedClass1);
   results[selectedClass2] = calculateResultsForClass(selectedClass2);
-  results[selectedClass3] = calculateResultsForClass(selectedClass3);
 
   return results;
 }
