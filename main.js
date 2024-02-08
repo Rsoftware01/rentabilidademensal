@@ -225,7 +225,7 @@ function renderProgression(evt) {
         ),
         datasets: [
           {
-            label: `Total Investido - Sem Rendimento (${selectedClass1})`,
+            label: `Total Investido - Sem Rendimento`,
             data: results[selectedClass1].map(
               (investmentObject) => investmentObject.investWithoutReturn
             ),
@@ -233,7 +233,7 @@ function renderProgression(evt) {
             fill: false,
           },
           {
-            label: `Total Investido + Retorno do Investimento (${selectedClass1})`,
+            label: `Total Investido + Retorno do Investimento`,
             data: results[selectedClass1].map(
               (investmentObject) => investmentObject.investedAmount
             ),
