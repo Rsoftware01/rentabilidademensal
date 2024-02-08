@@ -194,9 +194,9 @@ function renderProgression(evt) {
     );
 
     results = {
-      top10: resultsTop10,
-      topDividends: resultsTopDividends,
-      fiiXP: resultsFiiXP,
+      top10: resultsTop10["top10"],
+      topDividends: resultsTopDividends["topDividends"],
+      fiiXP: resultsFiiXP["fii"],
     };
   } else {
     results = calculateInvestmentResults(
@@ -206,6 +206,14 @@ function renderProgression(evt) {
       selectedClass2
     );
   }
+
+  // Aqui você pode usar os arrays de dados diretamente de `results`
+  // Exemplo de como acessar os arrays de dados:
+  console.log("Dados de todas as classes:", results);
+  console.log("Top 10:", results["top10"]);
+  console.log("Top Dividendos:", results["topDividends"]);
+  console.log("FII XP:", results["fiiXP"]);
+
   console.log("Resultados:", results);
 
   if (Array.isArray(results[selectedClass1])) {
@@ -233,11 +241,16 @@ function renderProgression(evt) {
             fill: false,
           },
           {
-            label: `Banchmark (${selectedClass2})`,
-            data: results[selectedClass2].map(
-              (investmentObject) => investmentObject.investedAmount
-            ),
-            borderColor: selectedClass2 === "top10" ? "#FF5733" : "#FF5733",
+            label: `Banchmark (${
+              selectedClass2 === "allClasses" ? "allClasses" : selectedClass2
+            })`,
+            data:
+              selectedClass2 === "allClasses"
+                ? []
+                : results[selectedClass2]?.map(
+                    (investmentObject) => investmentObject.investedAmount
+                  ) || [], // Se selectedClass2 não estiver definido ou não for uma chave válida, retorna um array vazio
+            borderColor: selectedClass1 === "top10" ? "#FF5733" : "#FF5733",
             fill: false,
           },
 
@@ -266,13 +279,13 @@ function renderProgression(evt) {
     lineChartReference["allClasses"] = new Chart(progressionChart, {
       type: "line",
       data: {
-        labels: results[selectedClass1].map(
+        labels: results["top10"].map(
           (investmentObject) => investmentObject.month
         ),
         datasets: [
           {
             label: `Top 10`,
-            data: results[selectedClass1].map(
+            data: results["top10"].map(
               (investmentObject) => investmentObject.investedAmount
             ),
             borderColor: "#FF5733", // Cor fixa
@@ -280,7 +293,7 @@ function renderProgression(evt) {
           },
           {
             label: `Top Dividendos`,
-            data: results[selectedClass1].map(
+            data: results["topDividends"].map(
               (investmentObject) => investmentObject.investedAmount
             ),
             borderColor: "#33FF57", // Cor fixa
@@ -288,7 +301,7 @@ function renderProgression(evt) {
           },
           {
             label: `FII XP`,
-            data: results[selectedClass1].map(
+            data: results["fiiXP"].map(
               (investmentObject) => investmentObject.investedAmount
             ),
             borderColor: "#FFFF00", // Cor fixa para FII XP
@@ -296,10 +309,10 @@ function renderProgression(evt) {
           },
           {
             label: `Total Investido - Sem Rendimento`,
-            data: results[selectedClass2].map(
+            data: results["top10"].map(
               (investmentObject) => investmentObject.investWithoutReturn
             ),
-            borderColor: selectedClass2 === "top10" ? "#3366FF" : "#3366FF", // Cores fixas
+            borderColor: selectedClass1 === "top10" ? "#3366FF" : "#3366FF", // Cores fixas
             fill: false,
           },
         ],
@@ -315,11 +328,17 @@ function renderProgression(evt) {
             beginAtZero: false,
             suggestedMax:
               Math.max(
-                ...results[selectedClass1].map(
+                ...results["top10"].map(
                   (investmentObject) => investmentObject.investedAmount
                 ),
-                ...results[selectedClass1].map(
+                ...results["top10"].map(
                   (investmentObject) => investmentObject.investWithoutReturn
+                ),
+                ...results["topDividends"].map(
+                  (investmentObject) => investmentObject.investedAmount
+                ),
+                ...results["fiiXP"].map(
+                  (investmentObject) => investmentObject.investedAmount
                 )
               ) + 1000,
           },
@@ -347,6 +366,7 @@ function renderProgression(evt) {
       "results-table"
     );
   }
+  console.log("Gráfico renderizado com sucesso!");
 }
 
 function isObjectEmpty(obj) {

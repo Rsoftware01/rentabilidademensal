@@ -46,6 +46,7 @@ function calculateInvestmentResults(
   const results = {};
 
   const calculateResultsForClass = (className) => {
+    console.log("Acessando classe:", className);
     let selectedData;
 
     if (className === "top10") {
@@ -58,62 +59,44 @@ function calculateInvestmentResults(
       selectedData = ibovespa;
     } else if (className === "ifix") {
       selectedData = ifix;
-    } else if (className === "allClasses") {
-      const resultsTop10 = calculateInvestmentResultsForClass(
-        startingAmount,
-        additionalContribution,
-        top10XPData
-      );
-      const resultsTopDividends = calculateInvestmentResultsForClass(
-        startingAmount,
-        additionalContribution,
-        topDividendsData
-      );
-      const resultsFiiXP = calculateInvestmentResultsForClass(
-        startingAmount,
-        additionalContribution,
-        fiiXPData
-      );
-
-      // Encontrar o ponto inicial mínimo entre todas as classes
-      const minStartingAmount = Math.min(
-        resultsTop10[0].investedAmount,
-        resultsTopDividends[0].investedAmount,
-        resultsFiiXP[0].investedAmount
-      );
-
-      // Ajustar todos os resultados para começar do mesmo ponto mínimo
-      const adjustedResultsTop10 = adjustStartingPoint(
-        resultsTop10,
-        minStartingAmount
-      );
-      const adjustedResultsTopDividends = adjustStartingPoint(
-        resultsTopDividends,
-        minStartingAmount
-      );
-      const adjustedResultsFiiXP = adjustStartingPoint(
-        resultsFiiXP,
-        minStartingAmount
-      );
-
-      return {
-        top10: adjustedResultsTop10,
-        topDividends: adjustedResultsTopDividends,
-        fiiXP: adjustedResultsFiiXP,
-      };
     } else {
+      console.log("Classe não reconhecida:", className);
       return [];
     }
 
-    return calculateInvestmentResultsForClass(
+    if (!selectedData) {
+      console.log("Dados da classe", className, "não estão definidos.");
+      return [];
+    }
+
+    const result = calculateInvestmentResultsForClass(
       startingAmount,
       additionalContribution,
       selectedData
     );
+
+    console.log("Acesso feito com sucesso ao array dos dados:", result);
+    return result;
   };
 
-  results[selectedClass1] = calculateResultsForClass(selectedClass1);
-  results[selectedClass2] = calculateResultsForClass(selectedClass2);
+  if (selectedClass1 === "allClasses") {
+    results["top10"] = calculateResultsForClass("top10");
+    results["topDividends"] = calculateResultsForClass("topDividends");
+    results["fiiXP"] = calculateResultsForClass("fii");
+  } else if (selectedClass1 !== undefined) {
+    results[selectedClass1] = calculateResultsForClass(selectedClass1);
+  }
+
+  if (selectedClass2 === "allClasses" && selectedClass2 !== selectedClass1) {
+    results["top10"] = calculateResultsForClass("top10");
+    results["topDividends"] = calculateResultsForClass("topDividends");
+    results["fiiXP"] = calculateResultsForClass("fii");
+  } else if (
+    selectedClass2 !== undefined &&
+    selectedClass2 !== selectedClass1
+  ) {
+    results[selectedClass2] = calculateResultsForClass(selectedClass2);
+  }
 
   return results;
 }
