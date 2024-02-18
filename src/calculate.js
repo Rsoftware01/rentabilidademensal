@@ -350,6 +350,161 @@ const fiiXPData = [
   { month: "dez/23", return: 4.72 },
 ];
 
+const startingMonths = [
+  "jun/18",
+  "jul/18",
+  "ago/18",
+  "set/18",
+  "out/18",
+  "nov/18",
+  "dez/18",
+  "jan/19",
+  "fev/19",
+  "mar/19",
+  "abr/19",
+  "mai/19",
+  "jun/19",
+  "jul/19",
+  "ago/19",
+  "set/19",
+  "out/19",
+  "nov/19",
+  "dez/19",
+  "jan/20",
+  "fev/20",
+  "mar/20",
+  "abr/20",
+  "mai/20",
+  "jun/20",
+  "jul/20",
+  "ago/20",
+  "set/20",
+  "out/20",
+  "nov/20",
+  "dez/20",
+  "jan/21",
+  "fev/21",
+  "mar/21",
+  "abr/21",
+  "mai/21",
+  "jun/21",
+  "jul/21",
+  "ago/21",
+  "set/21",
+  "out/21",
+  "nov/21",
+  "dez/21",
+  "jan/22",
+  "fev/22",
+  "mar/22",
+  "abr/22",
+  "mai/22",
+  "jun/22",
+  "jul/22",
+  "ago/22",
+  "set/22",
+  "out/22",
+  "nov/22",
+  "dez/22",
+  "jan/23",
+  "fev/23",
+  "mar/23",
+  "abr/23",
+  "mai/23",
+  "jun/23",
+  "jul/23",
+  "ago/23",
+  "set/23",
+  "out/23",
+  "nov/23",
+  "dez/23",
+];
+
+const finalMonths = [
+  "jun/18",
+  "jul/18",
+  "ago/18",
+  "set/18",
+  "out/18",
+  "nov/18",
+  "dez/18",
+  "jan/19",
+  "fev/19",
+  "mar/19",
+  "abr/19",
+  "mai/19",
+  "jun/19",
+  "jul/19",
+  "ago/19",
+  "set/19",
+  "out/19",
+  "nov/19",
+  "dez/19",
+  "jan/20",
+  "fev/20",
+  "mar/20",
+  "abr/20",
+  "mai/20",
+  "jun/20",
+  "jul/20",
+  "ago/20",
+  "set/20",
+  "out/20",
+  "nov/20",
+  "dez/20",
+  "jan/21",
+  "fev/21",
+  "mar/21",
+  "abr/21",
+  "mai/21",
+  "jun/21",
+  "jul/21",
+  "ago/21",
+  "set/21",
+  "out/21",
+  "nov/21",
+  "dez/21",
+  "jan/22",
+  "fev/22",
+  "mar/22",
+  "abr/22",
+  "mai/22",
+  "jun/22",
+  "jul/22",
+  "ago/22",
+  "set/22",
+  "out/22",
+  "nov/22",
+  "dez/22",
+  "jan/23",
+  "fev/23",
+  "mar/23",
+  "abr/23",
+  "mai/23",
+  "jun/23",
+  "jul/23",
+  "ago/23",
+  "set/23",
+  "out/23",
+  "nov/23",
+  "dez/23",
+];
+
+function filterDataByMonths(data, startingMonth, finalMonth) {
+  const startingIndex = startingMonths.indexOf(startingMonth);
+  const finalIndex = finalMonths.indexOf(finalMonth);
+
+  if (startingIndex === -1 || finalIndex === -1 || finalIndex < startingIndex) {
+    console.error("Erro ao filtrar os dados: meses selecionados inválidos.");
+    return [];
+  }
+
+  return data.filter((entry) => {
+    const monthIndex = startingMonths.indexOf(entry.month);
+    return monthIndex >= startingIndex && monthIndex <= finalIndex;
+  });
+}
+
 function adjustStartingPoint(results, targetStartingAmount) {
   // Ajustar todos os resultados para começar do mesmo ponto mínimo
   return results.map((result) => ({
@@ -363,7 +518,9 @@ function calculateInvestmentResults(
   startingAmount,
   additionalContribution,
   selectedClass1,
-  selectedClass2
+  selectedClass2,
+  startingMonth,
+  finalMonth
 ) {
   const results = {};
 
@@ -394,7 +551,9 @@ function calculateInvestmentResults(
     const result = calculateInvestmentResultsForClass(
       startingAmount,
       additionalContribution,
-      selectedData
+      selectedData,
+      startingMonth,
+      finalMonth
     );
 
     console.log("Acesso feito com sucesso ao array dos dados:", result);
@@ -426,15 +585,29 @@ function calculateInvestmentResults(
 function calculateInvestmentResultsForClass(
   startingAmount,
   additionalContribution,
-  classData
+  classData,
+  startingMonth,
+  finalMonth
 ) {
+  // Filtra os dados da classe com base nos meses selecionados
+  const filteredData = filterDataByMonths(classData, startingMonth, finalMonth);
+  const inicial = startingAmount;
+
   let investedAmount = startingAmount;
   let results = [];
 
-  for (let i = 0; i < classData.length; i++) {
-    const data = classData[i];
+  for (let i = 0; i < filteredData.length; i++) {
+    const data = filteredData[i];
 
-    const monthlyReturn = (investedAmount * data.return) / 100;
+    let monthlyReturn;
+
+    if (i === 0) {
+      // Se for o primeiro mês, o retorno é 0
+      monthlyReturn = 0;
+    } else {
+      // Caso contrário, calcula o retorno normalmente
+      monthlyReturn = (investedAmount * data.return) / 100;
+    }
 
     // Adiciona o aporte adicional apenas a partir do segundo mês
     if (i > 0) {
@@ -448,22 +621,23 @@ function calculateInvestmentResultsForClass(
     investedAmount += monthlyReturn;
 
     results.push({
-      month: data.month,
-      investWithoutReturn: parseFloat(investWithoutReturn.toFixed(2)),
-      investedAmount: parseFloat(investedAmount.toFixed(2)),
-      return: parseFloat(monthlyReturn.toFixed(2)),
-      returnReturn: parseFloat(returnReturn.toFixed(2)),
-      totalInvested: parseFloat((investedAmount - monthlyReturn).toFixed(2)),
+      month: data.month, // Aqui você mantém o mês da classe
+      portfolioMonth: startingMonths[i], // Adicione o mês correspondente da carteira
+      investWithoutReturn: parseFloat(investWithoutReturn.toFixed(2)), // Investimento sem retorno
+      inicial: parseFloat(startingAmount.toFixed(2)),
+
+      investedAmount: parseFloat(investedAmount.toFixed(2)), // Montante investido
+      return: parseFloat(monthlyReturn.toFixed(2)), // Retorno mensal
+      returnReturn: parseFloat(returnReturn.toFixed(2)), // Retorno acumulado
+      totalInvested: parseFloat((investedAmount - monthlyReturn).toFixed(2)), // Investimento total menos o retorno
       investedAmountWithoutReturns: parseFloat(
         (investedAmount - monthlyReturn - additionalContribution).toFixed(2)
-      ),
+      ), // Montante investido sem considerar os retornos
     });
   }
 
   return results;
 }
-
-// Adicione esta função no seu código calculate.js
 
 function consolidateResults(resultsTop10, resultsTopDividends, resultsFiiXP) {
   const consolidatedResults = [];
@@ -492,69 +666,79 @@ function consolidateResults(resultsTop10, resultsTopDividends, resultsFiiXP) {
   return consolidatedResults;
 }
 
-// resultados consilidados
 function calculateFinalResults(
   startingAmount,
   additionalContribution,
-  selectedClass
+  selectedClass1,
+  selectedClass2,
+  startingMonth,
+  finalMonth
 ) {
-  let resultsTop10, resultsTopDividends, resultsFiiXP;
+  let results1, results2;
 
-  if (selectedClass === "top10") {
-    resultsTop10 = calculateInvestmentResultsForClass(
+  if (selectedClass1 === "top10") {
+    results1 = calculateInvestmentResultsForClass(
       startingAmount,
       additionalContribution,
-      top10XPData
+      top10XPData,
+      startingMonth,
+      finalMonth
     );
-  } else if (selectedClass === "topDividends") {
-    resultsTopDividends = calculateInvestmentResultsForClass(
+  } else if (selectedClass1 === "topDividends") {
+    results1 = calculateInvestmentResultsForClass(
       startingAmount,
       additionalContribution,
-      topDividendsData
+      topDividendsData,
+      startingMonth,
+      finalMonth
     );
-  } else if (selectedClass === "fii") {
-    resultsFiiXP = calculateInvestmentResultsForClass(
+  } else if (selectedClass1 === "fii") {
+    results1 = calculateInvestmentResultsForClass(
       startingAmount,
       additionalContribution,
-      fiiXPData
+      fiiXPData,
+      startingMonth,
+      finalMonth
     );
-  } else if (selectedClass === "allClasses") {
-    resultsTop10 = calculateInvestmentResultsForClass(
-      startingAmount,
-      additionalContribution,
-      top10XPData
-    );
-    resultsTopDividends = calculateInvestmentResultsForClass(
-      startingAmount,
-      additionalContribution,
-      topDividendsData
-    );
-    resultsFiiXP = calculateInvestmentResultsForClass(
-      startingAmount,
-      additionalContribution,
-      fiiXPData
-    );
-
-    // Consolidate results
   } else {
     return {
-      error: "Invalid class selected",
+      error: "Invalid class selected for selectedClass1",
+    };
+  }
+
+  if (selectedClass2 === "top10") {
+    results2 = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      top10XPData,
+      startingMonth,
+      finalMonth
+    );
+  } else if (selectedClass2 === "topDividends") {
+    results2 = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      topDividendsData,
+      startingMonth,
+      finalMonth
+    );
+  } else if (selectedClass2 === "fii") {
+    results2 = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      fiiXPData,
+      startingMonth,
+      finalMonth
+    );
+  } else {
+    return {
+      error: "Invalid class selected for selectedClass2",
     };
   }
 
   return {
-    results:
-      selectedClass === "top10"
-        ? resultsTop10
-        : resultsTopDividends || resultsFiiXP,
-    consolidatedResults:
-      selectedClass === "top10"
-        ? []
-        : consolidateResults(
-            resultsTop10 || [],
-            resultsTopDividends || [],
-            resultsFiiXP || []
-          ),
+    results: { selectedClass1: results1, selectedClass2: results2 },
+    consolidatedResults: [],
   };
 }
 

@@ -28,131 +28,134 @@ function formatCurrencyToTable(value) {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-function renderConsolidatedTable(consolidatedData) {
-  const table = document.getElementById("results-final");
-  const tableBody = table.querySelector("tbody");
-
-  // Limpa a tabela antes de renderizar os novos resultados
-  tableBody.innerHTML = "";
-
-  consolidatedData.forEach((rowData) => {
-    const row = document.createElement("tr");
-
-    const totalInvestedCell = document.createElement("td");
-    totalInvestedCell.textContent = formatCurrencyToTable(
-      rowData.totalInvested
-    );
-    row.appendChild(totalInvestedCell);
-
-    const totalReturnCell = document.createElement("td");
-    totalReturnCell.textContent = formatCurrencyToTable(rowData.totalReturn);
-    row.appendChild(totalReturnCell);
-
-    const finalValueCell = document.createElement("td");
-    finalValueCell.textContent = formatCurrencyToTable(rowData.finalValue);
-    row.appendChild(finalValueCell);
-
-    tableBody.appendChild(row);
-  });
-
-  // Adicione este console.log para verificar os dados
-  console.log("Consolidated Data:", consolidatedData);
-}
-
-// Adicione esta função no seu código, de preferência antes da função handleCalculateResults
-
-function renderTable(results) {
-  const table = document.getElementById("results-table");
-  const tableHead = document.createElement("thead");
-  const headerRow = document.createElement("tr");
-
-  const headers = [""];
-
-  for (const headerText of headers) {
-    const header = document.createElement("th");
-    header.textContent = headerText;
-    headerRow.appendChild(header);
-  }
-
-  tableHead.appendChild(headerRow);
-  table.appendChild(tableHead);
-
-  const tableBody = table.querySelector("tbody");
-
-  // Limpa a tabela antes de renderizar os novos resultados
-  tableBody.innerHTML = "";
-
-  for (let i = 0; i < results.length; i++) {
-    const entry = results[i];
-    const row = document.createElement("tr");
-
-    // Alterna a classe de fundo entre as linhas
-    if (i % 2 !== 0) {
-      row.classList.add("bg-blue-200");
-    }
-
-    const monthCell = document.createElement("td");
-    monthCell.textContent = entry.month;
-    row.appendChild(monthCell);
-
-    const investWithoutReturnCell = document.createElement("td");
-    investWithoutReturnCell.textContent = formatCurrencyToTable(
-      entry.investWithoutReturn
-    );
-    row.appendChild(investWithoutReturnCell);
-
-    const returnCell = document.createElement("td");
-    returnCell.textContent = formatCurrencyToTable(entry.return);
-    row.appendChild(returnCell);
-
-    const returnReturnCell = document.createElement("td");
-    returnReturnCell.textContent = formatCurrencyToTable(entry.returnReturn);
-    row.appendChild(returnReturnCell);
-
-    const totalInvestedCell = document.createElement("td");
-    totalInvestedCell.textContent = formatCurrencyToTable(entry.investedAmount);
-    row.appendChild(totalInvestedCell);
-
-    tableBody.appendChild(row);
-  }
-}
-
 function handleCalculateResults() {
+  const resultContainer1 = document.getElementById("dados1");
+  const resultContainer2 = document.getElementById("dados2");
+  resultContainer1.innerHTML = "";
+  resultContainer2.innerHTML = "";
+  resultContainer1.innerHTML = `<div class="h-[30%] w-full flex flex-col ml-4 mr-2 mb-8 border-separate border-2 rounded-lg">
+         <p class="font-bold text-lg text-center bg-blue-900 text-white">Carteira</p>
+     </div>`; // Limpar o conteúdo anterior e adicionar o título
+  resultContainer2.innerHTML = `<div class="h-[30%] w-full flex flex-col ml-4 mr-2 mb-8 border-separate border-2 rounded-lg">
+         <p class="font-bold text-lg text-center bg-blue-900 text-white">Benchmark</p>
+     </div>`; // Limpar o conteúdo anterior e adicionar o título
+
   const startingAmountInput = document.getElementById("starting-amount");
   const additionalContributionInput = document.getElementById(
     "additional-contribution"
   );
-  const selectedClassInput = document.getElementsByClassName("investment-clas");
+  const selectedClass1 =
+    document.getElementsByClassName("investment-clas")[0].value;
+  const selectedClass2 =
+    document.getElementsByClassName("investment-clas")[1].value;
+  const startingMonthSelect = document.getElementById("investment-inicial");
+  const finalMonthSelect = document.getElementById("investment-final");
 
+  const startingMonth = startingMonthSelect.value;
+  const finalMonth = finalMonthSelect.value;
   // Obtenha os valores dos campos de entrada
   const startingAmount = parseFloat(startingAmountInput.value) || 0;
   const additionalContribution =
     parseFloat(additionalContributionInput.value) || 0;
-  const selectedClass1 = selectedClassInput.value || "top10";
 
-  // Calcular os resultados finais
-  const investmentResults = calculateFinalResults(
+  // Calcular os resultados finais para as classes selecionadas
+  const investmentResults = calculateInvestmentResults(
     startingAmount,
     additionalContribution,
-    selectedClass1
+    selectedClass1,
+    selectedClass2,
+    startingMonth,
+    finalMonth // Passando os meses selecionados
   );
 
-  // Exibir resultados
-  if (investmentResults.error) {
-    console.error(`Erro: ${investmentResults.error}`);
+  // Exibir resultados para as classes selecionadas
+  if (investmentResults[selectedClass1].error) {
+    resultContainer1.innerHTML += `<p>Erro: ${investmentResults[selectedClass1].error}</p>`;
   } else {
-    console.log(`Investimento total: ${investmentResults.totalInvestment}`);
-    console.log(
-      `Investimento inicial: ${investmentResults.totalStartingAmount}`
-    );
-    console.log(
-      `Aportes adicionais: ${investmentResults.totalAdditionalContribution}`
-    );
-    console.log("\nDetalhes mensais:\n");
-    displayResults(investmentResults.results);
-    renderTable(investmentResults.results);
-    renderConsolidatedTable(investmentResults.results);
+    const lastMonthIndex1 = investmentResults[selectedClass1].length - 1;
+    const lastMonthData1 = investmentResults[selectedClass1][lastMonthIndex1];
+
+    const inicial1 = lastMonthData1.inicial;
+    const totalInvestment1 = lastMonthData1.investWithoutReturn - inicial1;
+    const totalWReturn1 = lastMonthData1.investWithoutReturn;
+    const finalReturn1 = lastMonthData1.investedAmount - totalWReturn1;
+    const totalTotal1 = lastMonthData1.investedAmount;
+
+    resultContainer1.innerHTML += `<p class="ml-32" >Investimento inicial: ${formatCurrencyToTable(
+      inicial1
+    )}</p>`;
+    resultContainer1.innerHTML += `<p class="ml-32" >Investimento mensal: ${formatCurrencyToTable(
+      totalInvestment1
+    )}</p>`;
+    resultContainer1.innerHTML += `<p class="ml-32" >Total Investido: ${formatCurrencyToTable(
+      totalWReturn1
+    )}</p>`;
+    resultContainer1.innerHTML += `<p class="ml-32" >Retorno final: ${formatCurrencyToTable(
+      finalReturn1
+    )}</p>`;
+    resultContainer1.innerHTML += `<p class="ml-32" >Total final: ${formatCurrencyToTable(
+      totalTotal1
+    )}</p>`;
   }
+
+  if (investmentResults[selectedClass2].error) {
+    resultContainer2.innerHTML += `<p>Erro: ${investmentResults[selectedClass2].error}</p>`;
+  } else {
+    const lastMonthIndex2 = investmentResults[selectedClass2].length - 1;
+    const lastMonthData2 = investmentResults[selectedClass2][lastMonthIndex2];
+
+    const inicial2 = lastMonthData2.inicial;
+    const totalInvestment2 = lastMonthData2.investWithoutReturn - inicial2;
+    const totalWReturn2 = lastMonthData2.investWithoutReturn;
+    const finalReturn2 = lastMonthData2.investedAmount - totalWReturn2;
+    const totalTotal2 = lastMonthData2.investedAmount;
+
+    resultContainer2.innerHTML += `<p class="ml-32" >Investimento inicial: ${formatCurrencyToTable(
+      inicial2
+    )}</p>`;
+    resultContainer2.innerHTML += `<p class="ml-32" >Investimento mensal: ${formatCurrencyToTable(
+      totalInvestment2
+    )}</p>`;
+    resultContainer2.innerHTML += `<p class="ml-32" >Total Investido: ${formatCurrencyToTable(
+      totalWReturn2
+    )}</p>`;
+    resultContainer2.innerHTML += `<p class="ml-32" >Retorno final: ${formatCurrencyToTable(
+      finalReturn2
+    )}</p>`;
+    resultContainer2.innerHTML += `<p class="ml-32" >Total final: ${formatCurrencyToTable(
+      totalTotal2
+    )}</p>`;
+  }
+}
+
+function clearResults() {
+  const totalInvestmentElement = document.getElementById("total-investment");
+  const finalReturnElement = document.getElementById("final-return");
+  const totalAdditionalContributionElement = document.getElementById(
+    "total-additional-contribution"
+  );
+
+  totalInvestmentElement.textContent = "";
+  finalReturnElement.textContent = "";
+  totalAdditionalContributionElement.textContent = "";
+
+  const resultsTableBody = document
+    .getElementById("results-table")
+    .querySelector("tbody");
+  resultsTableBody.innerHTML = "";
+
+  // Limpar gráficos
+  resetCharts();
+
+  // Limpar os dados dentro dos contêineres resultContainer1 e resultContainer2
+  const resultContainer1 = document.getElementById("dados1");
+  const resultContainer2 = document.getElementById("dados2");
+  resultContainer1.innerHTML = `<div class="h-[30%] w-full flex flex-col ml-4 mr-2 mb-8 border-separate border-2 rounded-lg">
+         <p class="font-bold text-lg text-center bg-blue-900 text-white">Carteira</p>
+     </div>`;
+  resultContainer2.innerHTML = `<div class="h-[30%] w-full flex flex-col ml-4 mr-2 mb-8 border-separate border-2 rounded-lg">
+         <p class="font-bold text-lg text-center bg-blue-900 text-white">Benchmark</p>
+     </div>`;
 }
 
 function renderProgression(evt) {
@@ -174,36 +177,34 @@ function renderProgression(evt) {
     document.getElementsByClassName("investment-clas")[0].value;
   const selectedClass2 =
     document.getElementsByClassName("investment-clas")[1].value;
+
+  // Obtendo os valores selecionados nos campos de data inicial e final
+  // Adicione a obtenção dos valores selecionados nos campos de data inicial e final
+  const startingMonthSelect = document.getElementById("investment-inicial");
+  const finalMonthSelect = document.getElementById("investment-final");
+
+  const startingMonth = startingMonthSelect.value;
+  const finalMonth = finalMonthSelect.value;
+
   let results;
 
   if (selectedClass1 === "allClasses") {
-    const resultsTop10 = calculateInvestmentResults(
+    results = calculateInvestmentResults(
       startingAmount,
       additionalContribution,
-      "top10"
+      "top10",
+      undefined, // Deixe undefined para as classes "allClasses"
+      startingMonth, // Passa o mês inicial
+      finalMonth // Passa o mês final
     );
-    const resultsTopDividends = calculateInvestmentResults(
-      startingAmount,
-      additionalContribution,
-      "topDividends"
-    );
-    const resultsFiiXP = calculateInvestmentResults(
-      startingAmount,
-      additionalContribution,
-      "fii"
-    );
-
-    results = {
-      top10: resultsTop10["top10"],
-      topDividends: resultsTopDividends["topDividends"],
-      fiiXP: resultsFiiXP["fii"],
-    };
   } else {
     results = calculateInvestmentResults(
       startingAmount,
       additionalContribution,
       selectedClass1,
-      selectedClass2
+      selectedClass2,
+      startingMonth, // Passa o mês inicial
+      finalMonth // Passa o mês final
     );
   }
 
@@ -389,20 +390,30 @@ function clearForm() {
   form["starting-amount"].value = "";
   form["additional-contribution"].value = "";
 
-  const tableElement = document.getElementById("results-table");
-  const tableBody = tableElement.querySelector("tbody");
-  const tableHead = tableElement.querySelector("thead");
-
-  tableBody.innerHTML = "";
-  tableHead.innerHTML = "";
-
   resetCharts();
+
+  const startingAmountInput = document.getElementById("starting-amount");
+  const additionalContributionInput = document.getElementById(
+    "additional-contribution"
+  );
+
+  startingAmountInput.value = "";
+  additionalContributionInput.value = "";
+
+  clearResults(); // Adiciona esta linha para limpar os resultados
 
   const errorInputContainers = document.querySelectorAll(".error");
 
   for (const errorInputContainer of errorInputContainers) {
     errorInputContainer.classList.remove("error");
     errorInputContainer.parentElement.querySelector("p").remove();
+  }
+
+  // Limpa os elementos dentro do elemento com o ID "results-final"
+  const resultsFinalElement = document.getElementById("results-final");
+  const children = resultsFinalElement.children;
+  for (const child of children) {
+    child.innerHTML = "";
   }
 }
 
@@ -440,19 +451,6 @@ for (const formElement of form)
   if (formElement.tagName === "INPUT" && formElement.hasAttribute("name")) {
     formElement.addEventListener("blur", validateInput);
   }
-
-const mainEl = document.querySelector("main");
-const carouselEl = document.getElementById("carousel");
-const nextButton = document.getElementById("slide-arrow-next");
-const previousButton = document.getElementById("slide-arrow-previous");
-
-nextButton.addEventListener("click", () => {
-  carouselEl.scrollLeft += mainEl.clientWidth;
-});
-
-previousButton.addEventListener("click", () => {
-  carouselEl.scrollLeft -= mainEl.clientWidth;
-});
 
 form.addEventListener("submit", renderProgression);
 clearFormButton.addEventListener("click", clearForm);
