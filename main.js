@@ -23,6 +23,9 @@ function displayResults(results) {
     );
   }
 }
+function formatCurrencyTograph(value) {
+  return value.toFixed(2);
+}
 
 function formatCurrencyToTable(value) {
   return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -80,6 +83,7 @@ function handleCalculateResults() {
     const totalWReturn1 = lastMonthData1.investWithoutReturn;
     const finalReturn1 = lastMonthData1.investedAmount - totalWReturn1;
     const totalTotal1 = lastMonthData1.investedAmount;
+    const rMedio1 = finalReturn1 / totalWReturn1;
 
     resultContainer1.innerHTML += `<p class="ml-32" >Investimento inicial: ${formatCurrencyToTable(
       inicial1
@@ -96,6 +100,9 @@ function handleCalculateResults() {
     resultContainer1.innerHTML += `<p class="ml-32" >Total final: ${formatCurrencyToTable(
       totalTotal1
     )}</p>`;
+    resultContainer1.innerHTML += `<p class="ml-32" >Rendimento médio (%): ${formatCurrencyTograph(
+      rMedio1
+    )}</p>`;
   }
 
   if (investmentResults[selectedClass2].error) {
@@ -109,6 +116,7 @@ function handleCalculateResults() {
     const totalWReturn2 = lastMonthData2.investWithoutReturn;
     const finalReturn2 = lastMonthData2.investedAmount - totalWReturn2;
     const totalTotal2 = lastMonthData2.investedAmount;
+    const rMedio2 = finalReturn2 / totalWReturn2;
 
     resultContainer2.innerHTML += `<p class="ml-32" >Investimento inicial: ${formatCurrencyToTable(
       inicial2
@@ -124,6 +132,9 @@ function handleCalculateResults() {
     )}</p>`;
     resultContainer2.innerHTML += `<p class="ml-32" >Total final: ${formatCurrencyToTable(
       totalTotal2
+    )}</p>`;
+    resultContainer2.innerHTML += `<p class="ml-32" >Rendimento médio (%): ${formatCurrencyTograph(
+      rMedio2
     )}</p>`;
   }
 }
@@ -390,6 +401,8 @@ function clearForm() {
     "additional-contribution"
   );
   resetCharts();
+  const startingMonthSelect = document.getElementById("investment-inicial");
+  const finalMonthSelect = document.getElementById("investment-final");
 
   const resultContainer1 = document.getElementById("dados1");
   const resultContainer2 = document.getElementById("dados2");

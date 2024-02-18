@@ -597,7 +597,7 @@ function calculateInvestmentResultsForClass(
   let results = [];
 
   for (let i = 0; i < filteredData.length; i++) {
-    const data = filteredData[i];
+    const data = filteredData[i]; // Obtém os dados do mês atual na iteração
 
     let monthlyReturn;
 
@@ -614,18 +614,23 @@ function calculateInvestmentResultsForClass(
       investedAmount += additionalContribution;
     }
 
-    const investWithoutReturn = startingAmount + additionalContribution * i;
+    const investWithoutReturn = startingAmount + additionalContribution * i; // Calcula o investimento sem o retorno
     const returnReturn =
-      i === 0 ? monthlyReturn : monthlyReturn + results[i - 1].returnReturn;
+      i === 0 ? monthlyReturn : monthlyReturn + results[i - 1].returnReturn; // Calcula o retorno acumulado até o mês atual
 
-    investedAmount += monthlyReturn;
+    investedAmount += monthlyReturn; // Atualiza o montante investido com o retorno mensal
 
+    // Calcula os meses para retornar o investimento
+    const monthsToReturn = returnReturn !== 0 ? i / returnReturn : 0;
+    // Formata para manter apenas duas casas decimais
+    const formattedMonthsToReturn = parseFloat(monthsToReturn.toFixed(2));
+
+    // Adiciona os resultados do mês atual ao array de resultados
     results.push({
-      month: data.month, // Aqui você mantém o mês da classe
-      portfolioMonth: startingMonths[i], // Adicione o mês correspondente da carteira
+      month: data.month, // Mês da classe
+      portfolioMonth: startingMonths[i], // Mês correspondente da carteira
       investWithoutReturn: parseFloat(investWithoutReturn.toFixed(2)), // Investimento sem retorno
-      inicial: parseFloat(startingAmount.toFixed(2)),
-
+      inicial: parseFloat(startingAmount.toFixed(2)), // Investimento inicial
       investedAmount: parseFloat(investedAmount.toFixed(2)), // Montante investido
       return: parseFloat(monthlyReturn.toFixed(2)), // Retorno mensal
       returnReturn: parseFloat(returnReturn.toFixed(2)), // Retorno acumulado
@@ -633,6 +638,7 @@ function calculateInvestmentResultsForClass(
       investedAmountWithoutReturns: parseFloat(
         (investedAmount - monthlyReturn - additionalContribution).toFixed(2)
       ), // Montante investido sem considerar os retornos
+      monthsToReturn: formattedMonthsToReturn, // Meses para retornar o investimento
     });
   }
 
