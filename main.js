@@ -33,10 +33,10 @@ function handleCalculateResults() {
   const resultContainer2 = document.getElementById("dados2");
   resultContainer1.innerHTML = "";
   resultContainer2.innerHTML = "";
-  resultContainer1.innerHTML = `<div class="h-[30%] w-full flex flex-col ml-4 mr-2 mb-8 border-separate border-2 rounded-lg">
+  resultContainer1.innerHTML = `<div class="h-[30%] w-full flex flex-col  mr-2 mb-8 border-separate border-2 rounded-lg">
          <p class="font-bold text-lg text-center bg-blue-900 text-white">Carteira</p>
      </div>`; // Limpar o conteúdo anterior e adicionar o título
-  resultContainer2.innerHTML = `<div class="h-[30%] w-full flex flex-col ml-4 mr-2 mb-8 border-separate border-2 rounded-lg">
+  resultContainer2.innerHTML = `<div class="h-[30%] w-full flex flex-col  mr-2 mb-8 border-separate border-2 rounded-lg">
          <p class="font-bold text-lg text-center bg-blue-900 text-white">Benchmark</p>
      </div>`; // Limpar o conteúdo anterior e adicionar o título
 
@@ -128,7 +128,7 @@ function handleCalculateResults() {
   }
 }
 
-function clearResults() {
+function clearResults(resultContainer1, resultContainer2) {
   const totalInvestmentElement = document.getElementById("total-investment");
   const finalReturnElement = document.getElementById("final-return");
   const totalAdditionalContributionElement = document.getElementById(
@@ -144,12 +144,7 @@ function clearResults() {
     .querySelector("tbody");
   resultsTableBody.innerHTML = "";
 
-  // Limpar gráficos
-  resetCharts();
-
   // Limpar os dados dentro dos contêineres resultContainer1 e resultContainer2
-  const resultContainer1 = document.getElementById("dados1");
-  const resultContainer2 = document.getElementById("dados2");
   resultContainer1.innerHTML = `<div class="h-[30%] w-full flex flex-col ml-4 mr-2 mb-8 border-separate border-2 rounded-lg">
          <p class="font-bold text-lg text-center bg-blue-900 text-white">Carteira</p>
      </div>`;
@@ -390,30 +385,27 @@ function clearForm() {
   form["starting-amount"].value = "";
   form["additional-contribution"].value = "";
 
-  resetCharts();
-
   const startingAmountInput = document.getElementById("starting-amount");
   const additionalContributionInput = document.getElementById(
     "additional-contribution"
   );
+  resetCharts();
+
+  const resultContainer1 = document.getElementById("dados1");
+  const resultContainer2 = document.getElementById("dados2");
+
+  // Limpar o conteúdo dos containers de resultados
+  resultContainer1.innerHTML = "";
+  resultContainer2.innerHTML = "";
 
   startingAmountInput.value = "";
   additionalContributionInput.value = "";
-
-  clearResults(); // Adiciona esta linha para limpar os resultados
 
   const errorInputContainers = document.querySelectorAll(".error");
 
   for (const errorInputContainer of errorInputContainers) {
     errorInputContainer.classList.remove("error");
     errorInputContainer.parentElement.querySelector("p").remove();
-  }
-
-  // Limpa os elementos dentro do elemento com o ID "results-final"
-  const resultsFinalElement = document.getElementById("results-final");
-  const children = resultsFinalElement.children;
-  for (const child of children) {
-    child.innerHTML = "";
   }
 }
 
