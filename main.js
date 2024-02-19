@@ -271,7 +271,7 @@ function renderProgression(evt) {
             stacked: true,
           },
           y: {
-            beginAtZero: true,
+            beginAtZero: false,
             suggestedMax:
               Math.max(
                 ...results[selectedClass1].map(

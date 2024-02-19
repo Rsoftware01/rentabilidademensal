@@ -1,5 +1,4 @@
 const ibovespa = [
-  { month: "jun/18", return: 0.0 },
   { month: "jul/18", return: 8.88 },
   { month: "ago/18", return: -3.21 },
   { month: "set/18", return: 3.48 },
@@ -70,7 +69,6 @@ const ibovespa = [
 ];
 
 const ifix = [
-  { month: "jun/18", return: 0.0 },
   { month: "jul/18", return: 1.38 },
   { month: "ago/18", return: -0.7 },
   { month: "set/18", return: -0.21 },
@@ -137,10 +135,10 @@ const ifix = [
   { month: "out/23", return: -1.98 },
   { month: "nov/23", return: 0.7 },
   { month: "dez/23", return: 4.2 },
+  { month: "jan/24", return: 0.67 },
 ];
 
 const top10XPData = [
-  { month: "jun/18", return: 0.0 },
   { month: "jul/18", return: 9.76 },
   { month: "ago/18", return: -3.4 },
   { month: "set/18", return: 3.81 },
@@ -211,7 +209,6 @@ const top10XPData = [
 ];
 
 const topDividendsData = [
-  { month: "jun/18", return: 0.0 },
   { month: "jul/18", return: 5.82 },
   { month: "ago/18", return: 0.07 },
   { month: "set/18", return: 1.98 },
@@ -282,7 +279,6 @@ const topDividendsData = [
 ];
 
 const fiiXPData = [
-  { month: "jun/18", return: 0.0 },
   { month: "ago/18", return: 0.35 },
   { month: "set/18", return: 0.69 },
   { month: "out/18", return: 7.65 },
@@ -348,6 +344,7 @@ const fiiXPData = [
   { month: "out/23", return: -1.8 },
   { month: "nov/23", return: -0.2 },
   { month: "dez/23", return: 4.72 },
+  { month: "jan/24", return: -1.0 },
 ];
 
 const startingMonths = [
@@ -418,6 +415,7 @@ const startingMonths = [
   "out/23",
   "nov/23",
   "dez/23",
+  "jan/24",
 ];
 
 const finalMonths = [
@@ -488,6 +486,7 @@ const finalMonths = [
   "out/23",
   "nov/23",
   "dez/23",
+  "jan/24",
 ];
 
 function filterDataByMonths(data, startingMonth, finalMonth) {
