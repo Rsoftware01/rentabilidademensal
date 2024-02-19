@@ -88,16 +88,16 @@ function handleCalculateResults() {
     resultContainer1.innerHTML += `<p class="ml-32" ><strong>Investimento inicial:</strong> ${formatCurrencyToTable(
       inicial1
     )}</p>`;
-    resultContainer1.innerHTML += `<p class="ml-32" ><strong>Investimento mensal:</strong> ${formatCurrencyToTable(
+    resultContainer1.innerHTML += `<p class="ml-32" ><strong>Investimento mensal no período:</strong> ${formatCurrencyToTable(
       totalInvestment1
     )}</p>`;
-    resultContainer1.innerHTML += `<p class="ml-32" ><strong>Total Investido:</strong> ${formatCurrencyToTable(
+    resultContainer1.innerHTML += `<p class="ml-32" ><strong>Total Investido no período:</strong> ${formatCurrencyToTable(
       totalWReturn1
     )}</p>`;
-    resultContainer1.innerHTML += `<p class="ml-32" ><strong>Retorno final:</strong> ${formatCurrencyToTable(
+    resultContainer1.innerHTML += `<p class="ml-32" ><strong>Retorno no período:</strong> ${formatCurrencyToTable(
       finalReturn1
     )}</p>`;
-    resultContainer1.innerHTML += `<p class="ml-32" ><strong>Total final:</strong> ${formatCurrencyToTable(
+    resultContainer1.innerHTML += `<p class="ml-32" ><strong>Total acumulado no período:</strong> ${formatCurrencyToTable(
       totalTotal1
     )}</p>`;
     resultContainer1.innerHTML += `<p class="ml-32" ><strong>Rendimento médio (%):</strong> ${formatCurrencyTograph(
@@ -121,16 +121,16 @@ function handleCalculateResults() {
     resultContainer2.innerHTML += `<p class="ml-32" ><strong>Investimento inicial:</strong> ${formatCurrencyToTable(
       inicial2
     )}</p>`;
-    resultContainer2.innerHTML += `<p class="ml-32" ><strong>Investimento mensal:</strong> ${formatCurrencyToTable(
+    resultContainer2.innerHTML += `<p class="ml-32" ><strong>Investimento mensal no período:</strong> ${formatCurrencyToTable(
       totalInvestment2
     )}</p>`;
-    resultContainer2.innerHTML += `<p class="ml-32" ><strong>Total Investido:</strong> ${formatCurrencyToTable(
+    resultContainer2.innerHTML += `<p class="ml-32" ><strong>Total Investido no período:</strong> ${formatCurrencyToTable(
       totalWReturn2
     )}</p>`;
-    resultContainer2.innerHTML += `<p class="ml-32" ><strong>Retorno final:</strong> ${formatCurrencyToTable(
+    resultContainer2.innerHTML += `<p class="ml-32" ><strong>Retorno no período:</strong> ${formatCurrencyToTable(
       finalReturn2
     )}</p>`;
-    resultContainer2.innerHTML += `<p class="ml-32" ><strong>Total final:</strong> ${formatCurrencyToTable(
+    resultContainer2.innerHTML += `<p class="ml-32" ><strong>Total acumulado no período:</strong> ${formatCurrencyToTable(
       totalTotal2
     )}</p>`;
     resultContainer2.innerHTML += `<p class="ml-32" ><strong>Rendimento médio (%):</strong> ${formatCurrencyTograph(
