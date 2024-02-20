@@ -347,6 +347,42 @@ const fiiXPData = [
   { month: "jan/24", return: -1.0 },
 ];
 
+const smallData = [
+  { month: "mai/21", return: 8.05 },
+  { month: "jun/21", return: 6.93 },
+  { month: "jul/21", return: -4.88 },
+  { month: "ago/21", return: 3.94 },
+  { month: "set/21", return: -7.12 },
+  { month: "out/21", return: -15.5 },
+  { month: "nov/21", return: -0.49 },
+  { month: "dez/21", return: 5.54 },
+  { month: "jan/22", return: 2.21 },
+  { month: "fev/22", return: 2.93 },
+  { month: "mar/22", return: 8.04 },
+  { month: "abr/22", return: -4.71 },
+  { month: "mai/22", return: 1.66 },
+  { month: "jun/22", return: -14.3 },
+  { month: "jul/22", return: 7.82 },
+  { month: "ago/22", return: 11.22 },
+  { month: "set/22", return: 0.97 },
+  { month: "out/22", return: 13.41 },
+  { month: "nov/22", return: -14.3 },
+  { month: "dez/22", return: 2.71 },
+  { month: "jan/23", return: 8.26 },
+  { month: "fev/23", return: -6.21 },
+  { month: "mar/23", return: -5.84 },
+  { month: "abr/23", return: 1.77 },
+  { month: "mai/23", return: 14.31 },
+  { month: "jun/23", return: 10.08 },
+  { month: "jul/23", return: 7.55 },
+  { month: "ago/23", return: -4.05 },
+  { month: "set/23", return: -0.86 },
+  { month: "out/23", return: -9.46 },
+  { month: "nov/23", return: 13.47 },
+  { month: "dez/23", return: 9.18 },
+  { month: "jan/24", return: -0.63 },
+];
+
 const startingMonths = [
   "jun/18",
   "jul/18",
@@ -537,6 +573,8 @@ function calculateInvestmentResults(
       selectedData = ibovespa;
     } else if (className === "ifix") {
       selectedData = ifix;
+    } else if (className === "small") {
+      selectedData = smallData;
     } else {
       console.log("Classe não reconhecida:", className);
       return [];
@@ -563,6 +601,7 @@ function calculateInvestmentResults(
     results["top10"] = calculateResultsForClass("top10");
     results["topDividends"] = calculateResultsForClass("topDividends");
     results["fiiXP"] = calculateResultsForClass("fii");
+    results["small"] = calculateResultsForClass("small");
   } else if (selectedClass1 !== undefined) {
     results[selectedClass1] = calculateResultsForClass(selectedClass1);
   }
@@ -571,6 +610,7 @@ function calculateInvestmentResults(
     results["top10"] = calculateResultsForClass("top10");
     results["topDividends"] = calculateResultsForClass("topDividends");
     results["fiiXP"] = calculateResultsForClass("fii");
+    results["small"] = calculateResultsForClass("small");
   } else if (
     selectedClass2 !== undefined &&
     selectedClass2 !== selectedClass1
@@ -697,6 +737,14 @@ function calculateFinalResults(
       startingMonth,
       finalMonth
     );
+  } else if (selectedClass1 === "small") {
+    results1 = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      topDividendsData,
+      startingMonth,
+      finalMonth
+    );
   } else if (selectedClass1 === "fii") {
     results1 = calculateInvestmentResultsForClass(
       startingAmount,
@@ -720,6 +768,14 @@ function calculateFinalResults(
       finalMonth
     );
   } else if (selectedClass2 === "topDividends") {
+    results2 = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      topDividendsData,
+      startingMonth,
+      finalMonth
+    );
+  } else if (selectedClass2 === "small") {
     results2 = calculateInvestmentResultsForClass(
       startingAmount,
       additionalContribution,
@@ -754,6 +810,7 @@ export {
   top10XPData,
   topDividendsData,
   fiiXPData,
+  smallData,
   ifix,
   ibovespa,
 };

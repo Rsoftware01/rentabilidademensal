@@ -7,6 +7,7 @@ import {
   fiiXPData,
   ibovespa,
   ifix,
+  smallData,
 } from "./src/calculate";
 import { Chart } from "chart.js/auto";
 
@@ -83,7 +84,7 @@ function handleCalculateResults() {
     const totalWReturn1 = lastMonthData1.investWithoutReturn;
     const finalReturn1 = lastMonthData1.investedAmount - totalWReturn1;
     const totalTotal1 = lastMonthData1.investedAmount;
-    const rMedio1 = finalReturn1 / totalWReturn1;
+    const rMedio1 = (finalReturn1 / totalWReturn1) * 100;
 
     resultContainer1.innerHTML += `<p class="ml-32" ><strong>Investimento inicial:</strong> ${formatCurrencyToTable(
       inicial1
@@ -100,7 +101,7 @@ function handleCalculateResults() {
     resultContainer1.innerHTML += `<p class="ml-32" ><strong>Total acumulado no período:</strong> ${formatCurrencyToTable(
       totalTotal1
     )}</p>`;
-    resultContainer1.innerHTML += `<p class="ml-32" ><strong>Rendimento médio (%):</strong> ${formatCurrencyTograph(
+    resultContainer1.innerHTML += `<p class="ml-32" ><strong>Rendimento total (%):</strong> ${formatCurrencyTograph(
       rMedio1
     )}</p>`;
   }
@@ -116,7 +117,7 @@ function handleCalculateResults() {
     const totalWReturn2 = lastMonthData2.investWithoutReturn;
     const finalReturn2 = lastMonthData2.investedAmount - totalWReturn2;
     const totalTotal2 = lastMonthData2.investedAmount;
-    const rMedio2 = finalReturn2 / totalWReturn2;
+    const rMedio2 = (finalReturn2 / totalWReturn2) * 100;
 
     resultContainer2.innerHTML += `<p class="ml-32" ><strong>Investimento inicial:</strong> ${formatCurrencyToTable(
       inicial2
@@ -133,7 +134,7 @@ function handleCalculateResults() {
     resultContainer2.innerHTML += `<p class="ml-32" ><strong>Total acumulado no período:</strong> ${formatCurrencyToTable(
       totalTotal2
     )}</p>`;
-    resultContainer2.innerHTML += `<p class="ml-32" ><strong>Rendimento médio (%):</strong> ${formatCurrencyTograph(
+    resultContainer2.innerHTML += `<p class="ml-32" ><strong>Rendimento total (%):</strong> ${formatCurrencyTograph(
       rMedio2
     )}</p>`;
   }
@@ -220,6 +221,7 @@ function renderProgression(evt) {
   console.log("Top 10:", results["top10"]);
   console.log("Top Dividendos:", results["topDividends"]);
   console.log("FII XP:", results["fiiXP"]);
+  console.log("Small:", results["small"]);
 
   console.log("Resultados:", results);
 
@@ -315,6 +317,14 @@ function renderProgression(evt) {
             fill: false,
           },
           {
+            label: `Small Caps`,
+            data: results["small"].map(
+              (investmentObject) => investmentObject.investedAmount
+            ),
+            borderColor: "#FFFF00", // Cor fixa para FII XP
+            fill: false,
+          },
+          {
             label: `Total Investido - Sem Rendimento`,
             data: results["top10"].map(
               (investmentObject) => investmentObject.investWithoutReturn
@@ -346,6 +356,9 @@ function renderProgression(evt) {
                 ),
                 ...results["fiiXP"].map(
                   (investmentObject) => investmentObject.investedAmount
+                ),
+                ...results["small"].map(
+                  (investmentObject) => investmentObject.investedAmount
                 )
               ) + 1000,
           },
@@ -359,6 +372,7 @@ function renderProgression(evt) {
         "Top 10 - Total Investido",
         "Top Dividendos - Total Investido",
         "FII XP - Total Investido",
+        "Small Caps - Total Investido",
       ],
       results["top10"].map((investmentObject, index) => ({
         month: investmentObject.month,
@@ -369,6 +383,8 @@ function renderProgression(evt) {
         topDividendsReturn: results["topDividends"][index].return,
         fiiXPInvestedAmount: results["fiiXP"][index].investedAmount,
         fiiXPReturn: results["fiiXP"][index].return,
+        smallXPInvestedAmount: results["small"][index].investedAmount,
+        smallXPReturn: results["small"][index].return,
       })),
       "results-table"
     );
