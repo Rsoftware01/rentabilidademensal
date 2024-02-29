@@ -8,6 +8,7 @@ import {
   ibovespa,
   ifix,
   smallData,
+  bunkerData,
 } from "./src/calculate";
 import { Chart } from "chart.js/auto";
 
@@ -95,7 +96,7 @@ function handleCalculateResults() {
     resultContainer1.innerHTML += `<p class="ml-32" ><strong>Total Investido no período:</strong> ${formatCurrencyToTable(
       totalWReturn1
     )}</p>`;
-    resultContainer1.innerHTML += `<p class="ml-32" ><strong>Retorno no período:</strong> ${formatCurrencyToTable(
+    resultContainer1.innerHTML += `<p class="ml-32" ><strong>Retorno com reinvestimento dos dividendos:</strong> ${formatCurrencyToTable(
       finalReturn1
     )}</p>`;
     resultContainer1.innerHTML += `<p class="ml-32" ><strong>Total acumulado no período:</strong> ${formatCurrencyToTable(
@@ -128,7 +129,7 @@ function handleCalculateResults() {
     resultContainer2.innerHTML += `<p class="ml-32" ><strong>Total Investido no período:</strong> ${formatCurrencyToTable(
       totalWReturn2
     )}</p>`;
-    resultContainer2.innerHTML += `<p class="ml-32" ><strong>Retorno no período:</strong> ${formatCurrencyToTable(
+    resultContainer2.innerHTML += `<p class="ml-32" ><strong>Retorno com reinvestimento dos dividendos:</strong> ${formatCurrencyToTable(
       finalReturn2
     )}</p>`;
     resultContainer2.innerHTML += `<p class="ml-32" ><strong>Total acumulado no período:</strong> ${formatCurrencyToTable(
@@ -222,6 +223,7 @@ function renderProgression(evt) {
   console.log("Top Dividendos:", results["topDividends"]);
   console.log("FII XP:", results["fiiXP"]);
   console.log("Small:", results["small"]);
+  console.log("bunker:", results["bunker"]);
 
   console.log("Resultados:", results);
 
@@ -250,7 +252,7 @@ function renderProgression(evt) {
             fill: false,
           },
           {
-            label: `Banchmark (${
+            label: `Benchmark (${
               selectedClass2 === "allClasses" ? "allClasses" : selectedClass2
             })`,
             data:
@@ -325,6 +327,14 @@ function renderProgression(evt) {
             fill: false,
           },
           {
+            label: `Bunker`,
+            data: results["bunker"].map(
+              (investmentObject) => investmentObject.investedAmount
+            ),
+            borderColor: "#FFFF00", // Cor fixa para FII XP
+            fill: false,
+          },
+          {
             label: `Total Investido - Sem Rendimento`,
             data: results["top10"].map(
               (investmentObject) => investmentObject.investWithoutReturn
@@ -359,6 +369,9 @@ function renderProgression(evt) {
                 ),
                 ...results["small"].map(
                   (investmentObject) => investmentObject.investedAmount
+                ),
+                ...results["bunker"].map(
+                  (investmentObject) => investmentObject.investedAmount
                 )
               ) + 1000,
           },
@@ -373,6 +386,7 @@ function renderProgression(evt) {
         "Top Dividendos - Total Investido",
         "FII XP - Total Investido",
         "Small Caps - Total Investido",
+        "Bunker - Total Investido",
       ],
       results["top10"].map((investmentObject, index) => ({
         month: investmentObject.month,
@@ -385,6 +399,7 @@ function renderProgression(evt) {
         fiiXPReturn: results["fiiXP"][index].return,
         smallXPInvestedAmount: results["small"][index].investedAmount,
         smallXPReturn: results["small"][index].return,
+        smallXPReturn: results["bunker"][index].return,
       })),
       "results-table"
     );

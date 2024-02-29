@@ -344,7 +344,7 @@ const fiiXPData = [
   { month: "out/23", return: -1.8 },
   { month: "nov/23", return: -0.2 },
   { month: "dez/23", return: 4.72 },
-  { month: "jan/24", return: -1.0 },
+  { month: "jan/24", return: 1.0 },
 ];
 
 const smallData = [
@@ -381,6 +381,36 @@ const smallData = [
   { month: "nov/23", return: 13.47 },
   { month: "dez/23", return: 9.18 },
   { month: "jan/24", return: -0.63 },
+];
+
+const bunkerData = [
+  { month: "nov/21", return: 2.32 },
+  { month: "dez/21", return: -0.17 },
+  { month: "jan/22", return: 4.49 },
+  { month: "fev/22", return: 0.23 },
+  { month: "mar/22", return: 12.04 },
+  { month: "abr/22", return: -3.24 },
+  { month: "mai/22", return: 1.31 },
+  { month: "jun/22", return: -8.57 },
+  { month: "jul/22", return: 3.7 },
+  { month: "ago/22", return: 3.07 },
+  { month: "set/22", return: -2.91 },
+  { month: "out/22", return: 7.67 },
+  { month: "nov/22", return: -6.28 },
+  { month: "dez/22", return: -0.44 },
+  { month: "jan/23", return: 1.57 },
+  { month: "fev/23", return: -4.66 },
+  { month: "mar/23", return: 5.4 },
+  { month: "abr/23", return: 4.36 },
+  { month: "mai/23", return: -1.67 },
+  { month: "jun/23", return: 8.18 },
+  { month: "jul/23", return: 1.57 },
+  { month: "ago/23", return: -2.98 },
+  { month: "set/23", return: 2.29 },
+  { month: "out/23", return: -1.23 },
+  { month: "nov/23", return: 12.74 },
+  { month: "dez/23", return: 5.13 },
+  { month: "jan/24", return: -5.23 },
 ];
 
 const startingMonths = [
@@ -534,19 +564,16 @@ function filterDataByMonths(data, startingMonth, finalMonth) {
     return [];
   }
 
+  // Filtra os meses de finalMonths a partir do índice finalIndex
+  const filteredFinalMonths = finalMonths.slice(finalIndex);
+
   return data.filter((entry) => {
     const monthIndex = startingMonths.indexOf(entry.month);
-    return monthIndex >= startingIndex && monthIndex <= finalIndex;
+    return (
+      monthIndex >= startingIndex &&
+      monthIndex < startingIndex + filteredFinalMonths.length
+    );
   });
-}
-
-function adjustStartingPoint(results, targetStartingAmount) {
-  // Ajustar todos os resultados para começar do mesmo ponto mínimo
-  return results.map((result) => ({
-    ...result,
-    investedAmount:
-      result.investedAmount - result.startingAmount + targetStartingAmount,
-  }));
 }
 
 function calculateInvestmentResults(
@@ -575,6 +602,8 @@ function calculateInvestmentResults(
       selectedData = ifix;
     } else if (className === "small") {
       selectedData = smallData;
+    } else if (className === "bunker") {
+      selectedData = bunkerData;
     } else {
       console.log("Classe não reconhecida:", className);
       return [];
@@ -602,6 +631,7 @@ function calculateInvestmentResults(
     results["topDividends"] = calculateResultsForClass("topDividends");
     results["fiiXP"] = calculateResultsForClass("fii");
     results["small"] = calculateResultsForClass("small");
+    results["bunker"] = calculateResultsForClass("bunker");
   } else if (selectedClass1 !== undefined) {
     results[selectedClass1] = calculateResultsForClass(selectedClass1);
   }
@@ -611,6 +641,7 @@ function calculateInvestmentResults(
     results["topDividends"] = calculateResultsForClass("topDividends");
     results["fiiXP"] = calculateResultsForClass("fii");
     results["small"] = calculateResultsForClass("small");
+    results["bunker"] = calculateResultsForClass("bunker");
   } else if (
     selectedClass2 !== undefined &&
     selectedClass2 !== selectedClass1
@@ -635,27 +666,35 @@ function calculateInvestmentResultsForClass(
   let investedAmount = startingAmount;
   let results = [];
 
+  // Adiciona o mês especial "GEGE" como mês zero
+  results.push({
+    month: "",
+    portfolioMonth: 0,
+    investWithoutReturn: parseFloat(startingAmount.toFixed(2)),
+    inicial: parseFloat(startingAmount.toFixed(2)),
+    investedAmount: parseFloat(startingAmount.toFixed(2)),
+    return: 0,
+    returnReturn: 0,
+    totalInvested: parseFloat(startingAmount.toFixed(2)),
+    investedAmountWithoutReturns: parseFloat(startingAmount.toFixed(2)),
+    monthsToReturn: 0,
+  });
+
   for (let i = 0; i < filteredData.length; i++) {
     const data = filteredData[i]; // Obtém os dados do mês atual na iteração
 
     let monthlyReturn;
 
-    if (i === 0) {
-      // Se for o primeiro mês, o retorno é 0
-      monthlyReturn = 0;
-    } else {
-      // Caso contrário, calcula o retorno normalmente
-      monthlyReturn = (investedAmount * data.return) / 100;
-    }
+    // Caso contrário, calcula o retorno normalmente
+    monthlyReturn = (investedAmount * data.return) / 100;
 
     // Adiciona o aporte adicional apenas a partir do segundo mês
-    if (i > 0) {
-      investedAmount += additionalContribution;
-    }
+
+    investedAmount += additionalContribution;
 
     const investWithoutReturn = startingAmount + additionalContribution * i; // Calcula o investimento sem o retorno
     const returnReturn =
-      i === 0 ? monthlyReturn : monthlyReturn + results[i - 1].returnReturn; // Calcula o retorno acumulado até o mês atual
+      i === 0 ? monthlyReturn : monthlyReturn + results[i].returnReturn; // Calcula o retorno acumulado até o mês atual
 
     investedAmount += monthlyReturn; // Atualiza o montante investido com o retorno mensal
 
@@ -682,33 +721,6 @@ function calculateInvestmentResultsForClass(
   }
 
   return results;
-}
-
-function consolidateResults(resultsTop10, resultsTopDividends, resultsFiiXP) {
-  const consolidatedResults = [];
-
-  for (let i = 0; i < resultsTop10.length; i++) {
-    const totalInvested =
-      (resultsTop10[i]?.totalInvested || 0) +
-      (resultsTopDividends[i]?.totalInvested || 0) +
-      (resultsFiiXP[i]?.totalInvested || 0);
-
-    const totalReturn =
-      (resultsTop10[i]?.returnReturn || 0) +
-      (resultsTopDividends[i]?.returnReturn || 0) +
-      (resultsFiiXP[i]?.returnReturn || 0);
-
-    const finalValue = totalInvested + totalReturn;
-
-    consolidatedResults.push({
-      month: resultsTop10[i]?.month || resultsTopDividends[i]?.month,
-      totalInvested,
-      totalReturn,
-      finalValue,
-    });
-  }
-
-  return consolidatedResults;
 }
 
 function calculateFinalResults(
@@ -738,6 +750,14 @@ function calculateFinalResults(
       finalMonth
     );
   } else if (selectedClass1 === "small") {
+    results1 = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      topDividendsData,
+      startingMonth,
+      finalMonth
+    );
+  } else if (selectedClass1 === "bunker") {
     results1 = calculateInvestmentResultsForClass(
       startingAmount,
       additionalContribution,
@@ -791,6 +811,14 @@ function calculateFinalResults(
       startingMonth,
       finalMonth
     );
+  } else if (selectedClass2 === "bunker") {
+    results2 = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      fiiXPData,
+      startingMonth,
+      finalMonth
+    );
   } else {
     return {
       error: "Invalid class selected for selectedClass2",
@@ -813,4 +841,5 @@ export {
   smallData,
   ifix,
   ibovespa,
+  bunkerData,
 };
