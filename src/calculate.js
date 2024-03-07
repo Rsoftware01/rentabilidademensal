@@ -564,15 +564,9 @@ function filterDataByMonths(data, startingMonth, finalMonth) {
     return [];
   }
 
-  // Filtra os meses de finalMonths a partir do índice finalIndex
-  const filteredFinalMonths = finalMonths.slice(finalIndex);
-
   return data.filter((entry) => {
     const monthIndex = startingMonths.indexOf(entry.month);
-    return (
-      monthIndex >= startingIndex &&
-      monthIndex < startingIndex + filteredFinalMonths.length
-    );
+    return monthIndex >= startingIndex && monthIndex <= finalIndex;
   });
 }
 
@@ -692,7 +686,8 @@ function calculateInvestmentResultsForClass(
 
     investedAmount += additionalContribution;
 
-    const investWithoutReturn = startingAmount + additionalContribution * i; // Calcula o investimento sem o retorno
+    const investWithoutReturn =
+      startingAmount + additionalContribution + additionalContribution * i; // Calcula o investimento sem o retorno
     const returnReturn =
       i === 0 ? monthlyReturn : monthlyReturn + results[i].returnReturn; // Calcula o retorno acumulado até o mês atual
 

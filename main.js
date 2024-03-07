@@ -175,10 +175,12 @@ function renderProgression(evt) {
   resetCharts();
 
   const startingAmount = Number(
-    document.getElementById("starting-amount").value.replace(",", ".")
+    document.getElementById("starting-amount").value.replace(/[\.,]/g, "")
   );
   const additionalContribution = Number(
-    document.getElementById("additional-contribution").value.replace(",", ".")
+    document
+      .getElementById("additional-contribution")
+      .value.replace(/[\.,]/g, "")
   );
 
   const selectedClass1 =
@@ -453,23 +455,71 @@ function clearForm() {
   }
 }
 
+// Adicione um ouvinte de eventos ao elemento <select> com o nome "investment-class"
+// Adicione um ouvinte de eventos ao elemento <select> com o nome "investment-clas"
+document
+  .querySelector('select[name="investment-clas"]')
+  .addEventListener("change", function (evt) {
+    const selectedOption = evt.target.value;
+    let warningText = "";
+
+    switch (selectedOption) {
+      case "top10":
+        warningText = "Dados disponíveis de Jul/18 para frente";
+        break;
+      case "topDividends":
+        warningText = "Dados disponíveis de Jul/18 para frente";
+        break;
+      case "fii":
+        warningText = "Dados disponíveis de Ago/18 para frente";
+        break;
+      case "small":
+        warningText = "Dados disponíveis de Mai/21 para frente";
+        break;
+      case "bunker":
+        warningText = "Dados disponíveis de Nov/21 para frente";
+        break;
+      default:
+        // Se nenhuma opção corresponder, não exiba mensagem de aviso
+        return;
+    }
+
+    const warningElement = document.createElement("div");
+    warningElement.classList.add("text-white");
+    warningElement.classList.add("font-bold");
+    warningElement.innerText = warningText;
+
+    // Remove qualquer mensagem de aviso anterior
+    const parentElement = evt.target.parentElement;
+    const grandParentElement = parentElement.parentElement;
+    grandParentElement.querySelectorAll(".text-white").forEach((element) => {
+      element.remove();
+    });
+
+    // Adiciona a mensagem de aviso
+    grandParentElement.appendChild(warningElement);
+  });
+
+// Função para validar a entrada
 function validateInput(evt) {
   if (evt.target.value === "") {
     return;
   }
 
   const { parentElement } = evt.target;
-  const grandParentElement = evt.target.parentElement.parentElement;
+  const grandParentElement = parentElement.parentElement;
 
-  const inputValue = evt.target.value.replace(",", ".");
+  // Remove todos os pontos e substitui a vírgula como sendo uma vírgula
+  const inputValue = evt.target.value.replaceAll(".", "").replace(",", ",");
+
   if (
     !parentElement.classList.contains("error") &&
     (isNaN(inputValue) || Number(inputValue) <= 0)
   ) {
-    const errorTextElement = document.createElement("p"); //<p></p>
-    errorTextElement.classList.add("text-red-500"); //<p class =""></p>
-    errorTextElement.classList.add("font-bold"); //<p class =""></p>
-    errorTextElement.innerText = "Insira um valor maior do que zero"; //<p class="text-red-500 font-bold"> Insira um valor maior do que zero</p>
+    const errorTextElement = document.createElement("p");
+    errorTextElement.classList.add("text-red-500");
+    errorTextElement.classList.add("font-bold");
+    errorTextElement.innerText = "Insira um valor maior do que zero";
 
     parentElement.classList.add("error");
     grandParentElement.appendChild(errorTextElement);
