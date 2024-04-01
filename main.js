@@ -9,6 +9,7 @@ import {
   ifix,
   smallData,
   bunkerData,
+  topDividendsPlus,
 } from "./src/calculate";
 import { Chart } from "chart.js/auto";
 
@@ -337,6 +338,14 @@ function renderProgression(evt) {
             fill: false,
           },
           {
+            label: `topDividendsPlus`,
+            data: results["topDividendsPlus"].map(
+              (investmentObject) => investmentObject.investedAmount
+            ),
+            borderColor: "#FFFF00", // Cor fixa para FII XP
+            fill: false,
+          },
+          {
             label: `Total Investido - Sem Rendimento`,
             data: results["top10"].map(
               (investmentObject) => investmentObject.investWithoutReturn
@@ -374,6 +383,9 @@ function renderProgression(evt) {
                 ),
                 ...results["bunker"].map(
                   (investmentObject) => investmentObject.investedAmount
+                ),
+                ...results["topDividendsPlus"].map(
+                  (investmentObject) => investmentObject.investedAmount
                 )
               ) + 1000,
           },
@@ -389,6 +401,7 @@ function renderProgression(evt) {
         "FII XP - Total Investido",
         "Small Caps - Total Investido",
         "Bunker - Total Investido",
+        "topDividendsPlus - Total Investido",
       ],
       results["top10"].map((investmentObject, index) => ({
         month: investmentObject.month,
@@ -402,6 +415,7 @@ function renderProgression(evt) {
         smallXPInvestedAmount: results["small"][index].investedAmount,
         smallXPReturn: results["small"][index].return,
         smallXPReturn: results["bunker"][index].return,
+        smallXPReturn: results["topDividendsPlus"][index].return,
       })),
       "results-table"
     );
@@ -478,6 +492,9 @@ document
         break;
       case "bunker":
         warningText = "Dados disponíveis de Nov/21 para frente";
+        break;
+      case "topDividendsPlus":
+        warningText = "Dados disponíveis de Abr/22 para frente";
         break;
       default:
         // Se nenhuma opção corresponder, não exiba mensagem de aviso

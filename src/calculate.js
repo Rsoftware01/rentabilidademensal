@@ -136,6 +136,8 @@ const ifix = [
   { month: "nov/23", return: 0.7 },
   { month: "dez/23", return: 4.2 },
   { month: "jan/24", return: 0.67 },
+  { month: "fev/24", return: 0.8 },
+  { month: "mar/24", return: 1.4 },
 ];
 
 const top10XPData = [
@@ -345,6 +347,8 @@ const fiiXPData = [
   { month: "nov/23", return: -0.2 },
   { month: "dez/23", return: 4.72 },
   { month: "jan/24", return: 1.0 },
+  { month: "fev/24", return: 1.3 },
+  { month: "mar/24", return: 1.2 },
 ];
 
 const smallData = [
@@ -411,6 +415,33 @@ const bunkerData = [
   { month: "nov/23", return: 12.74 },
   { month: "dez/23", return: 5.13 },
   { month: "jan/24", return: -5.23 },
+];
+
+const topDividendsPlus = [
+  { month: "abr/22", return: -5.54 },
+  { month: "mai/22", return: 3.5 },
+  { month: "jun/22", return: -12.0 },
+  { month: "jul/22", return: 11.22 },
+  { month: "ago/22", return: 12.9 },
+  { month: "set/22", return: 4.79 },
+  { month: "out/22", return: 1.01 },
+  { month: "nov/22", return: -1.81 },
+  { month: "dez/22", return: -0.75 },
+  { month: "jan/23", return: 8.03 },
+  { month: "fev/23", return: -9.2 },
+  { month: "mar/23", return: -4.86 },
+  { month: "abr/23", return: 7.28 },
+  { month: "mai/23", return: 11.12 },
+  { month: "jun/23", return: 12.41 },
+  { month: "jul/23", return: 3.58 },
+  { month: "ago/23", return: -0.44 },
+  { month: "set/23", return: 2.96 },
+  { month: "out/23", return: -3.8 },
+  { month: "nov/23", return: 9.16 },
+  { month: "dez/23", return: 8.49 },
+  { month: "jan/24", return: -0.02 },
+  { month: "fev/24", return: 2.99 },
+  { month: "mar/24", return: -2.7 },
 ];
 
 const startingMonths = [
@@ -482,6 +513,8 @@ const startingMonths = [
   "nov/23",
   "dez/23",
   "jan/24",
+  "fev/24",
+  "mar/24",
 ];
 
 const finalMonths = [
@@ -553,6 +586,8 @@ const finalMonths = [
   "nov/23",
   "dez/23",
   "jan/24",
+  "fev/24",
+  "mar/24",
 ];
 
 function filterDataByMonths(data, startingMonth, finalMonth) {
@@ -598,6 +633,8 @@ function calculateInvestmentResults(
       selectedData = smallData;
     } else if (className === "bunker") {
       selectedData = bunkerData;
+    } else if (className === "topDividendsPlus") {
+      selectedData = topDividendsPlus;
     } else {
       console.log("Classe não reconhecida:", className);
       return [];
@@ -626,6 +663,7 @@ function calculateInvestmentResults(
     results["fiiXP"] = calculateResultsForClass("fii");
     results["small"] = calculateResultsForClass("small");
     results["bunker"] = calculateResultsForClass("bunker");
+    results["topDividendsPlus"] = calculateResultsForClass("topDividendsPlus");
   } else if (selectedClass1 !== undefined) {
     results[selectedClass1] = calculateResultsForClass(selectedClass1);
   }
@@ -636,6 +674,7 @@ function calculateInvestmentResults(
     results["fiiXP"] = calculateResultsForClass("fii");
     results["small"] = calculateResultsForClass("small");
     results["bunker"] = calculateResultsForClass("bunker");
+    results["topDividendsPlus"] = calculateResultsForClass("topDividendsPlus");
   } else if (
     selectedClass2 !== undefined &&
     selectedClass2 !== selectedClass1
@@ -752,6 +791,14 @@ function calculateFinalResults(
       startingMonth,
       finalMonth
     );
+  } else if (selectedClass1 === "topDividendsPlus") {
+    results1 = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      topDividendsData,
+      startingMonth,
+      finalMonth
+    );
   } else if (selectedClass1 === "bunker") {
     results1 = calculateInvestmentResultsForClass(
       startingAmount,
@@ -784,6 +831,14 @@ function calculateFinalResults(
     );
   } else if (selectedClass2 === "topDividends") {
     results2 = calculateInvestmentResultsForClass(
+      startingAmount,
+      additionalContribution,
+      topDividendsData,
+      startingMonth,
+      finalMonth
+    );
+  } else if (selectedClass2 === "topDividendsPlus") {
+    results1 = calculateInvestmentResultsForClass(
       startingAmount,
       additionalContribution,
       topDividendsData,
@@ -837,4 +892,5 @@ export {
   ifix,
   ibovespa,
   bunkerData,
+  topDividendsPlus,
 };
