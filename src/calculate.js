@@ -66,6 +66,8 @@ const ibovespa = [
   { month: "nov/23", return: 12.54 },
   { month: "dez/23", return: 5.38 },
   { month: "jan/24", return: -4.79 },
+  { month: "fev/24", return: 1.0 },
+  { month: "mar/24", return: -0.7 },
 ];
 
 const ifix = [
@@ -208,6 +210,7 @@ const top10XPData = [
   { month: "nov/23", return: 9.33 },
   { month: "dez/23", return: 6.78 },
   { month: "jan/24", return: -4.08 },
+  { month: "fev/24", return: -0.5 },
 ];
 
 const topDividendsData = [
@@ -278,6 +281,7 @@ const topDividendsData = [
   { month: "nov/23", return: 11.61 },
   { month: "dez/23", return: 6.51 },
   { month: "jan/24", return: -3.3 },
+  { month: "fev/24", return: -1.3 },
 ];
 
 const fiiXPData = [
@@ -385,6 +389,7 @@ const smallData = [
   { month: "nov/23", return: 13.47 },
   { month: "dez/23", return: 9.18 },
   { month: "jan/24", return: -0.63 },
+  { month: "fev/24", return: 0.0 },
 ];
 
 const bunkerData = [
@@ -415,6 +420,7 @@ const bunkerData = [
   { month: "nov/23", return: 12.74 },
   { month: "dez/23", return: 5.13 },
   { month: "jan/24", return: -5.23 },
+  { month: "fev/24", return: -0.17 },
 ];
 
 const topDividendsPlus = [
